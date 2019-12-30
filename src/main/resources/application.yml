@@ -1,0 +1,9 @@
+spring:
+    data:
+      mongodb:
+        host: mongo001
+        port: 27017
+        username: spring-boot
+        password: xyz123
+        authentication-database: gamestore
+        database: gamestore

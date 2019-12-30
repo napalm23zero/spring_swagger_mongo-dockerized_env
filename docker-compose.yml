@@ -1,0 +1,64 @@
+version: '3.6'
+services:
+    application:
+        build: 
+            context: '.'
+            dockerfile: Dockerfile
+        container_name: gamestore
+        ports: 
+            - 8080:8080
+        depends_on:
+            - mongo001
+            - mongo002
+            - mongo003
+        volumes: 
+            - "./:/app"
+        working_dir: /app
+        stdin_open: true
+        tty: true
+
+    mongo001:
+        hostname: mongo001
+        container_name: mongo001
+        image: mongo:4.0
+        ports:
+            - 27017:27017
+        restart: always
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: password
+        command: mongod --bind_ip_all --auth
+        volumes:
+            - ./data/mongo001:/data/db
+            - ./config/mongodb/mongo001.js:/docker-entrypoint-initdb.d/config.js
+
+    mongo002:
+        hostname: mongo002
+        container_name: mongo002
+        image: mongo:4.0
+        ports:
+            - 27027:27017
+        restart: always
+        depends_on:
+            - mongo001
+        command: mongod --bind_ip_all
+        volumes:
+            - ./data/mongo002:/data/db
+            - ./config/mongodb/mongo002.js:/docker-entrypoint-initdb.d/config.js
+    
+    mongo003:
+        hostname: mongo003
+        container_name: mongo003
+        image: mongo:4.0
+        ports:
+            - 27037:27017
+        restart: always
+        depends_on:
+            - mongo001
+        command: mongod --bind_ip_all
+        volumes:
+            - ./data/mongo003:/data/db
+            - ./config/mongodb/mongo003.js:/docker-entrypoint-initdb.d/config.js
+networks:
+    gamestore:
+        external: true
